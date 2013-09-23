@@ -13,7 +13,7 @@ long <- 12.132110
 system("python -m pywws.LogData -vvv ~/weather/data")
 
 # generate text files from logData: 
-system("python -m pywws.Template ~/weather/data ~/weather/templates/test.txt ~/weather/results/res_test.txt")
+#system("python -m pywws.Template ~/weather/data ~/weather/templates/test.txt ~/weather/results/res_test.txt")
 #######3
 
 # example data: 
