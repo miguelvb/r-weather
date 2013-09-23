@@ -1,5 +1,10 @@
 require(data.table)
 
+#### station position : 
+
+lat <- 55.659124
+long <- 12.132110
+
 ### LOAD DATA ######
 
 ## from python pywws : 
@@ -79,7 +84,7 @@ plot.h <- ggplot(data)  +
   stat_smooth(aes(x=date,y=hout), colour = "darkslategrey", method="loess", span=0.1) +
   ylab('HUMIDITY (%)') + 
   xlab('TIME (UT+2)') +  
-  labs(title = 'MUNKSØGÅRD (55.66,12.33), DENMARK \n Humidity: internal and external') 
+  labs(title = 'MUNKSØGÅRD (55.659,12.123), DENMARK \n Humidity: internal and external') 
 
 plot.h
 
@@ -93,49 +98,54 @@ plot.t <- ggplot(data)  +
   ylab('TEMPERATURE (C)') + 
   xlab('TIME (UT+2)') +  
   scale_y_continuous( breaks=seq(10,24,1)) +
-  labs(title = 'MUNKSØGÅRD (55.66,12.33), DENMARK \n Temperature: internal and external') 
+  labs(title = 'MUNKSØGÅRD (55.659,12.123), DENMARK \n Temperature: internal and external') 
 
 plot.t
 
 
-
 plot.p <- ggplot(data)  + 
-  #geom_point(aes(x=date,y=press), colour = "red") + 
-  geom_line(aes(x=date,y=press), colour = "red") +
-  geom_smooth(aes(x=date,y=press), colour = "grey") +
   
-  #ylim(0, 45) + 
-  ylab('') + 
-  xlab('') +  
-  # labs(title = 'Freq distribution of treatments')  +
-  #geom_text(data=x,aes(x=labels,y=percent,label=lab),vjust=-0.5) + 
-  #theme_bw() +
-  #opts(legend.position="none") +
-  scale_y_continuous( breaks=seq(1000,1025, 1)  , limits = c(1000,1025), expand = c(0,0) ) + 
-  theme( 
-    #  axis.text.x= element_text( size= 14 ) , 
-    #  legend.position = "none" ,
-    #  panel.margin = unit(0,"null")  
-    )
+  geom_line(aes(x=date,y=press), colour = "darkorange3", alpha = 0.4) +
+  stat_smooth(aes(x=date,y=press), colour = "darkslategrey", method="loess", span=0.1) +
+  ylab('PRESSURE (hpa)') + 
+  xlab('TIME (UT+2)') +  
+  scale_y_continuous( breaks=seq(1010,1025, 1)  , limits = c(1010,1025)) + 
+  labs(title = 'MUNKSØGÅRD (55.659,12.123), DENMARK \n Barometric Pressure') 
+
 plot.p
 
-plot.p2 <- ggplot(data)  + 
-  #geom_point(aes(x=date,y=press), colour = "red") + 
-  geom_point(aes(x=date,y=press), colour = "grey", alpha = 0.6) +
-  geom_smooth(aes(x=date,y=press), colour = "red") +
-  #ylim(0, 45) + 
-  ylab('') + 
-  xlab('') +  
-  # labs(title = 'Freq distribution of treatments')  +
-  #geom_text(data=x,aes(x=labels,y=percent,label=lab),vjust=-0.5) + 
-  #theme_bw() +
-  #opts(legend.position="none") +
-  scale_y_continuous( breaks=seq(1000,1025, 1)  , limits = c(1000,1025), expand = c(0,0) ) + 
-  theme( 
-    #  axis.text.x= element_text( size= 14 ) , 
-    #  legend.position = "none" ,
-    #  panel.margin = unit(0,"null")  
-    )
-plot.p2
+#### save tiff : 
+tiff(file = "temp.tif",width = 15, height = 7.5, units = "in", res = 72, compression="lzw")
+plot.t
+dev.off()
+tiff(file = "hum.tif",width = 15, height = 7.5, units = "in", res = 72, compression="lzw")
+plot.h
+dev.off()
+tiff(file = "press.tif",width = 15, height = 7.5, units = "in", res = 72, compression="lzw")
+plot.p
+dev.off()
+
+
+
+# plot.p <- ggplot(data)  + 
+#   #geom_point(aes(x=date,y=press), colour = "red") + 
+#   geom_line(aes(x=date,y=press), colour = "darkorange3", alpha = 0.4) +
+#   stat_smooth(aes(x=date,y=press), colour = "darkslategrey", method="loess", span=0.1) +
+#   
+#   #ylim(0, 45) + 
+#   ylab('') + 
+#   xlab('') +  
+#   # labs(title = 'Freq distribution of treatments')  +
+#   #geom_text(data=x,aes(x=labels,y=percent,label=lab),vjust=-0.5) + 
+#   #theme_bw() +
+#   #opts(legend.position="none") +
+#   scale_y_continuous( breaks=seq(1000,1025, 1)  , limits = c(1000,1025), expand = c(0,0) ) + 
+#   theme( 
+#     #  axis.text.x= element_text( size= 14 ) , 
+#     #  legend.position = "none" ,
+#     #  panel.margin = unit(0,"null")  
+#     )
+# plot.p
+
 
 
