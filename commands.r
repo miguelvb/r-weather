@@ -11,7 +11,7 @@ w.logData <- function(){
 system("python -m pywws.LogData -vvv ~/weather/data")
 }
 
-w.logData()
+#w.logData()
 
 # this will update the data from the weather station: 
 w.hourly <- function(){
@@ -23,8 +23,8 @@ w.process <- function(){
   system("python -m pywws.Process -vvv ~/weather/data")
 }
 
-w.process()
-w.hourly()
+#w.process()
+#w.hourly()
 
 
 # generate text files from logData: 
@@ -45,7 +45,8 @@ w.template <- function(template_name, result_name = template_name,
 # example: 
 
 
-w.template("yowindow.xml","rtest.xml")
-w.template("feed_hourly.xml")
-w.template("24hrs.txt")
-w.template("24hrs_mg.txt")
+#w.template("yowindow.xml","rtest.xml")
+#w.template("feed_hourly.xml")
+#w.template("24hrs.txt")
+#w.template("24hrs_mg.txt")
+
