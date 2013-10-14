@@ -2,7 +2,9 @@
 dir <- "~/weather/r-weather"
 setwd(dir)
 require(data.table)
+
 source("functions.R")
+w.logAndGraph()
 
 template.names <- list.files("~/weather/templates")
 template.names
@@ -14,12 +16,15 @@ lat <- 55.659124
 long <- 12.132110
 
 ##
+w.logData()
+load("~/weather/r-weather/data_weather")
+w.graphPress(data.weather,T)
 
-w.logAndGraph()
 
 ##
 data <- w.getData()
 load("~/weather/r-weather/data_weather")
-str(data)
-tail(data)
-w.graphTemp(data,T)
+str(data.weather)
+tail(data.weather)
+w.graphTemp(data.weather)
+w.graphPress(data.weather)

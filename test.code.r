@@ -1,10 +1,19 @@
 ### take dplicates out 
 dt <- data.table(x=1:10, y=c(1,2,2,3,4,5,6,7,7,7), key="y")
 
+data.weather$date[1]
+min.day <- data.weather$day[1]   # it is keyed by date.
+max.day <- data.weather$day[nrow(data.weather)]
+min.day <- as.POSIXct(min.day, format = "%Y-%m-%d", tz="UTC")
+max.day <- as.POSIXct(max.day, tz="UTC")
+min.day
+max.day
+
 dt[unique(dt$y)]
 
 unique(dt)
-
+library(scales)
+w.graphTemp(data=data.weather,FALSE)
 
 load("~/weather/r-weather/data_weather")
 str(data)

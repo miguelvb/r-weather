@@ -1,3 +1,5 @@
+d <- as.POSIXct(as.Date("1999-12-31") +1 )
+d 
 ###
 #phyton commands 
 ###

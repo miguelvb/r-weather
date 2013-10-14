@@ -31,10 +31,12 @@ w.getData <- function(){
   
   data.weather <- rbindlist(list.data)
 #  data.weather
-  
   data.weather[, date := as.POSIXct(date_tmp, format="%Y-%m-%d %H:%M:%S", tz = "UTC") ][,date_tmp := NULL]
-  
   data.weather[, date := date + 2*3600] # add 2 hours for the dates... 
+  
+  data.weather[, hour := substr(as.character(date), 11, 13) ]
+  data.weather[, day := substr(as.character(date), 0, 10) ]
+  
   setkey(data.weather,"date")
   
   # now clean it, removing duplcates :
@@ -57,22 +59,34 @@ w.cleanData <- function(data){
   
 }
 
+library(scales)
+
 w.graphTemp <- function(data,save_image=FALSE){
   
-  
+  require(scales)
+  min.tout <- floor(min(data$tout, na.rm =T)) - 3 
+  min.day <- data$day[1]   # it is keyed by date.
+ max.day <- data$day[nrow(data)]
+  min.day <- as.POSIXct(min.day) 
+ max.day <- as.POSIXct(as.Date(max.day) +1 )
   plot.t <- ggplot(data)  +     
     geom_line(aes(x=date,y=tin), colour = "darkorange3", alpha = 0.4) + 
     geom_line(aes(x=date,y=tout), colour = "darkorange3", alpha = 0.4) +
-    stat_smooth(aes(x=date,y=tin), colour = "darkslategrey", method="loess", span=0.1) + 
-    stat_smooth(aes(x=date,y=tout), colour = "darkslategrey", method="loess", span=0.1) +
+    stat_smooth(aes(x=date,y=tin), colour = "darkslategrey", method="loess", span=0.05) + 
+    stat_smooth(aes(x=date,y=tout), colour = "darkslategrey", method="loess", span=0.05) +
     ylab('TEMPERATURE (C)') + 
     xlab('TIME (UT+2)') +  
-    scale_y_continuous( breaks=seq(7,24,1)) +
-    labs(title = 'MUNKSØGÅRD (55.659,12.123), DENMARK \n Temperature: internal and external') 
+    scale_y_continuous( breaks=seq(min.tout,24,1)) +
+    scale_x_datetime(breaks = date_breaks("6 hour"),
+                    minor_breaks = date_breaks("1 hour"), 
+                     limits = c(min.day,max.day)
+                    ) + 
+    labs(title = 'MUNKSØGÅRD (55.659,12.123), DENMARK \n Temperature: internal and external') + 
+    theme(axis.text.x  = element_text(angle=90))
   
   if(save_image){
-    g.height <- 400
-    g.width <- 600
+    g.height <- 400*2
+    g.width <- 600*2
     g.dir <- "~/weather/r-weather/graphs"
     png(file = paste(g.dir,"temp.png",sep="/"),width = g.width, height =  g.height, type ="quartz")
     print(plot.t)
@@ -85,17 +99,30 @@ w.graphTemp <- function(data,save_image=FALSE){
 
 w.graphPress <- function(data,save_image=FALSE){
   
+  press <- data$press 
+  press <- press[(press > 900 & press < 1030) ]
+  mi <- floor(min(press, na.rm=T)) -2
+  ma <- ceiling(max(press, na.rm=T)) +2
+  min.day <- data$day[1]   # it is keyed by date.
+  max.day <- data$day[nrow(data)]
+  min.day <- as.POSIXct(min.day) 
+  max.day <- as.POSIXct(as.Date(max.day) +1 )
   plot.p <- ggplot(data)  + 
     
     geom_line(aes(x=date,y=press), colour = "darkorange3", alpha = 0.4) +
     stat_smooth(aes(x=date,y=press), colour = "darkslategrey", method="loess", span=0.1) +
     ylab('PRESSURE (hpa)') + 
     xlab('TIME (UT+2)') +  
-    scale_y_continuous( breaks=seq(1010,1025, 1)  , limits = c(1010,1025)) + 
+    scale_y_continuous( breaks=seq(mi,ma, 1)  , limits = c(mi,ma)) + 
+    scale_x_datetime(breaks = date_breaks("6 hour"),
+                     minor_breaks = date_breaks("1 hour"), 
+                     limits = c(min.day,max.day)
+                     ) +
+    theme(axis.text.x  = element_text(angle=90)) + 
     labs(title = 'MUNKSØGÅRD (55.659,12.123), DENMARK \n Barometric Pressure') 
   if(save_image){
-    g.height <- 400
-    g.width <- 600
+    g.height <- 400*2
+    g.width <- 600*2
     g.dir <- "~/weather/r-weather/graphs"
     png(file = paste(g.dir,"press.png",sep="/"),width = g.width, height =  g.height,type ="quartz")
     print(plot.p)
@@ -118,8 +145,8 @@ w.graphHum <- function(data,save_image=FALSE){
     labs(title = 'MUNKSØGÅRD (55.659,12.123), DENMARK \n Humidity: internal and external') 
   
   if(save_image){
-    g.height <- 400
-    g.width <- 600
+    g.height <- 400*2
+    g.width <- 600*2
     g.dir <- "~/weather/r-weather/graphs"
     png(file = paste(g.dir,"hum.png",sep="/"),width = g.width, height =  g.height,type ="quartz")
     print(plot.h)
